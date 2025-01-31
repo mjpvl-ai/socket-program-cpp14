@@ -8,7 +8,9 @@
 #include <iomanip>
 #include <cstdlib>  // For std::stoi
 #include <getopt.h> // For getopt_long (optional)
+#include <thread>   // For std::thread
 #include "message.pb.h"
+#include <bitset>
 
 std::unordered_map<int, bool> registered_users; // Stores registered users (ID -> registered flag)
 
@@ -17,9 +19,19 @@ std::unordered_map<int, bool> registered_users; // Stores registered users (ID -
 // Function to validate the hexadecimal string 'sd' (should be a 4-byte hexadecimal number)
 bool is_valid_hexadecimal(const std::string& str) {
     if (str.size() != 4) return false;  // Ensure it's exactly 4 characters
+    
+    // Check if all characters are hexadecimal digits
     for (char c : str) {
-        if (!std::isxdigit(c)) return false;  // Check if all characters are hexadecimal digits
+        if (!std::isxdigit(c)) return false;
     }
+
+    // Convert hexadecimal to binary and check if it's exactly 16 bits (4 hex digits)
+    unsigned int hexValue = std::stoi(str, nullptr, 16);  // Convert to unsigned int
+    std::bitset<16> binary(hexValue);  // Convert the hex value to a 16-bit binary
+    
+    // Ensure the binary representation has 4 digits for each hex digit
+    if (binary.size() != 16) return false;
+
     return true;
 }
 
@@ -219,7 +231,8 @@ int main(int argc, char** argv) {
             perror("Accept failed");
             continue;
         }
-        handle_client(client_socket);
+        // Handle client requests in a new thread
+        std::thread(handle_client, client_socket).detach();
     }
 
     close(server_fd);

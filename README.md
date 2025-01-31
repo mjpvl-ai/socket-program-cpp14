@@ -70,3 +70,12 @@ sudo apt update && sudo apt install -y protobuf-compiler libprotobuf-dev g++
 | `-d` | Data payload (only for `PDU_SESSION_REQUEST`) |
 
 
+Sample Output
+
+![alt text](image.png)
+
+![alt text](image-1.png)
+
+![alt text](image-2.png)
+
+![alt text](image-3.png)
