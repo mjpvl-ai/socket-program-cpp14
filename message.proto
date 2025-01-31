@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+enum MessageType {
+    REGISTRATION_REQUEST = 0;
+    REGISTRATION_ACK = 1;
+    PDU_SESSION_REQUEST = 2;
+    PDU_SESSION_ACK = 3;
+    DEREGISTRATION_REQUEST = 4;
+    DEREGISTRATION_ACK = 5;
+}
+
+message RegistrationRequest {
+    int32 id = 1;
+}
+
+message RegistrationAck {
+    int32 id = 1;
+    int32 status = 2;
+    string status_message = 3;
+}
+
+message PduSessionRequest {
+    int32 id = 1;
+    int32 pdu_id = 2;
+    int32 sst = 3;
+    string sd = 4;
+}
+
+message PduSessionAck {
+    int32 id = 1;
+    int32 pdu_id = 2;
+    int32 status = 3;
+    string status_message = 4;
+}
+
+message DeregistrationRequest {
+    int32 id = 1;
+}
+
+message DeregistrationAck {
+    int32 id = 1;
+    int32 status = 2;
+    string status_message = 3;
+}
+
+message ClientMessage {
+    MessageType type = 1;
+    oneof payload {
+        RegistrationRequest reg_req = 2;
+        PduSessionRequest pdu_req = 3;
+        DeregistrationRequest dereg_req = 4;
+    }
+}
+
+message ServerMessage {
+    MessageType type = 1;
+    oneof payload {
+        RegistrationAck reg_ack = 2;
+        PduSessionAck pdu_ack = 3;
+        DeregistrationAck dereg_ack = 4;
+    }
+}
