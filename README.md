@@ -38,7 +38,7 @@ sudo apt update && sudo apt install -y protobuf-compiler libprotobuf-dev g++
 
 1. **Start the Server**
    ```sh
-   ./server
+   ./server -p 8082
    ```
 
 2. **Run the Client with Different Requests**
