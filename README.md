@@ -84,54 +84,14 @@ Sample Output
 
 
 ## Running Docker
-
-1. **Create docker-compose.yml**
-    ## Create a file named docker-compose.yml in your project directory:
-   ```sh
-   services:
-    serverapi:
-        build: .
-        ports:
-        - "8081:8081"
-        container_name: serverapi
-        restart: unless-stopped
-
-   ```
-
-2. **Dockerfile**
-     ```docker
-        FROM ubuntu:latest
-
-        # Install required dependencies
-        RUN apt update && apt install -y \
-            g++ cmake make \
-            libpistache-dev \
-            nlohmann-json3-dev \
-            && rm -rf /var/lib/apt/lists/*
-
-        # Set working directory
-        WORKDIR /app
-
-        # Copy source code
-        COPY serverAPI.cpp .
-
-        # Compile the server
-        RUN g++ serverAPI.cpp -o serverAPI -lpistache -std=c++17
-
-        # Expose the API port
-        EXPOSE 8081
-
-        # Run the API server
-        CMD ["./serverAPI"]
-
-     ```
-
-   - **PDU Session Request:**
-     ```sh
-     ./client -h 127.0.0.1 -p 8082 -t PDU_SESSION_REQUEST -i 1 -s 255 -d "1100"
-     ```
-
-   - **Deregistration Request:**
-     ```sh
-     ./client -h 127.0.0.1 -p 8082 -t DEREGISTRATION_REQUEST -i 1
-     ```
+### build the docker images 
+ ```sh
+    sudo docker-compose up --build
+```
+If this is sucessfuly build then you will find the log "Attaching to rest_api_client, rest_api_server"
+### Run the client docker images 
+ ```sh
+    sudo docker exec -it rest_api_client ./clientAPI
+```
+### Sample output for the reference
+![alt text](image-5.png)
