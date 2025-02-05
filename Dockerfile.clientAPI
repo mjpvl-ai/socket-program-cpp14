@@ -1,25 +1,28 @@
-# Use Ubuntu as the base image
-FROM ubuntu:latest
+# Use Ubuntu 22.04 as the base image
+FROM ubuntu:22.04
 
-# Install required dependencies
+# Install dependencies
 RUN apt update && apt install -y \
-    g++ cmake make \
-    libpistache-dev \
-    nlohmann-json3-dev \
-    libcurl4-openssl-dev \
+    g++ curl cmake make ninja-build pkg-config \
+    libcurl4-openssl-dev git \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
+# Set the working directory
 WORKDIR /app
 
-# Copy source code
+# Install nlohmann-json from source
+RUN git clone https://github.com/nlohmann/json.git && \
+    cd json && \
+    mkdir build && cd build && \
+    cmake -G Ninja .. && \
+    ninja && ninja install
+
+# Copy client source code
 COPY clientAPI.cpp .
 
-# Compile the server and client
-RUN g++ clientAPI.cpp -o clientAPI -lpistache -lcurl -std=c++17
+# Compile the client
+RUN g++ -o clientAPI clientAPI.cpp -lcurl -std=c++17 -I/usr/local/include
 
-# Expose the API port
-EXPOSE 8091
-
-# Start the server in the background and then run the client
-CMD ./clientAPI
+# Run the client
+# Change CMD to prevent auto-running
+CMD ["sh", "-c", "while true; do sleep 3600; done"]

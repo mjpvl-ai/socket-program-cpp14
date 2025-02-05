@@ -1,17 +1,18 @@
 services:
-  serverapi:
-    build: 
+  server:
+    build:
       context: .
       dockerfile: Dockerfile.serverAPI
+    container_name: rest_api_server
     ports:
       - "8081:8081"
-    container_name: serverapi
-    restart: unless-stopped
-  clientapi:
-    build: 
+
+  client:
+    build:
       context: .
       dockerfile: Dockerfile.clientAPI
-    ports:
-      - "8091:8091"
-    container_name: clientapi
-    restart: unless-stopped
+    container_name: rest_api_client
+    depends_on:
+      - server
+    environment:
+      - SERVER_URL=http://server:8081  # Container networking

@@ -6,7 +6,7 @@
 using json = nlohmann::json;
 using namespace std;
 
-const std::string SERVER_URL = "http://localhost:8081";
+const std::string SERVER_URL = "http://server:8081";
 
 // Callback function for handling response
 size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::string *output) {

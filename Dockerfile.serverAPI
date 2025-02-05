@@ -1,24 +1,38 @@
-# Use Ubuntu as the base image
-FROM ubuntu:latest
+# Use Ubuntu 22.04 as the base image
+FROM ubuntu:22.04
 
 # Install required dependencies
 RUN apt update && apt install -y \
-    g++ cmake make \
-    libpistache-dev \
-    nlohmann-json3-dev \
+    g++ cmake make curl git ninja-build \
+    meson pkg-config libcurl4-openssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
+# Set the working directory
 WORKDIR /app
 
-# Copy source code
+# Install nlohmann-json from source
+RUN git clone https://github.com/nlohmann/json.git && \
+    cd json && \
+    mkdir build && cd build && \
+    cmake -G Ninja .. && \
+    ninja && ninja install
+
+# Install Pistache from source using Meson
+RUN git clone https://github.com/pistacheio/pistache.git && \
+    cd pistache && \
+    git submodule update --init --recursive && \
+    meson setup build && \
+    ninja -C build && \
+    ninja -C build install
+
+# Copy server source code
 COPY serverAPI.cpp .
 
-# Compile the server and client
-RUN g++ serverAPI.cpp -o serverAPI -lpistache -std=c++17
+# Compile the server
+RUN g++ -o serverAPI serverAPI.cpp -lpistache -pthread -std=c++17
 
 # Expose the API port
 EXPOSE 8081
 
-# Start the server in the background and then run the client
-CMD ./serverAPI 
+# Run the server
+CMD ["./serverAPI"]
