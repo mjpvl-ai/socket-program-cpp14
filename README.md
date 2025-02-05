@@ -13,7 +13,7 @@ Ensure you have the following installed on your system:
 
 To install all required dependencies, run:
 ```sh
-sudo apt update && sudo apt install -y protobuf-compiler libprotobuf-dev g++
+sudo apt update && sudo apt install -y protobuf-compiler libprotobuf-dev  nlohmann-json3-dev libpistache-dev libcurl4-openssl-dev g++
 ```
 
 ## Compilation Steps
@@ -81,3 +81,57 @@ Sample Output
 ![alt text](image-3.png)
 
 ![alt text](image-4.png)
+
+
+## Running Docker
+
+1. **Create docker-compose.yml**
+    ## Create a file named docker-compose.yml in your project directory:
+   ```sh
+   services:
+    serverapi:
+        build: .
+        ports:
+        - "8081:8081"
+        container_name: serverapi
+        restart: unless-stopped
+
+   ```
+
+2. **Dockerfile**
+     ```docker
+        FROM ubuntu:latest
+
+        # Install required dependencies
+        RUN apt update && apt install -y \
+            g++ cmake make \
+            libpistache-dev \
+            nlohmann-json3-dev \
+            && rm -rf /var/lib/apt/lists/*
+
+        # Set working directory
+        WORKDIR /app
+
+        # Copy source code
+        COPY serverAPI.cpp .
+
+        # Compile the server
+        RUN g++ serverAPI.cpp -o serverAPI -lpistache -std=c++17
+
+        # Expose the API port
+        EXPOSE 8081
+
+        # Run the API server
+        CMD ["./serverAPI"]
+
+     ```
+
+   - **PDU Session Request:**
+     ```sh
+     ./client -h 127.0.0.1 -p 8082 -t PDU_SESSION_REQUEST -i 1 -s 255 -d "1100"
+     ```
+
+   - **Deregistration Request:**
+     ```sh
+     ./client -h 127.0.0.1 -p 8082 -t DEREGISTRATION_REQUEST -i 1
+     ```

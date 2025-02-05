@@ -1,20 +1,17 @@
-version: '3.8'
-
 services:
-  server:
-    build: .
-    container_name: protobuf_server
+  serverapi:
+    build: 
+      context: .
+      dockerfile: Dockerfile.serverAPI
     ports:
-      - "8082:8082"
-    command: ./server
-    volumes:
-      - .:/app
-
-  client:
-    build: .
-    container_name: protobuf_client
-    depends_on:
-      - server
-    command: ./client -h server -p 8082 -t REGISTRATION_REQUEST -i 1
-    volumes:
-      - .:/app
+      - "8081:8081"
+    container_name: serverapi
+    restart: unless-stopped
+  clientapi:
+    build: 
+      context: .
+      dockerfile: Dockerfile.clientAPI
+    ports:
+      - "8091:8091"
+    container_name: clientapi
+    restart: unless-stopped

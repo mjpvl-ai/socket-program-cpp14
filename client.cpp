@@ -117,6 +117,8 @@ void parse_arguments(int argc, char* argv[], std::string& server_ip, int& port, 
             exit(EXIT_FAILURE);
         }
     } else {
+        std::cout << "Sending message type: " << type << std::endl;
+
         std::cerr << "Invalid message type" << std::endl;
         exit(EXIT_FAILURE);
     }
